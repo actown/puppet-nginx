@@ -14,10 +14,11 @@
 #
 # This class file is not called directly
 class nginx::package::debian(
-    $manage_repo    = true,
-    $package_name   = 'nginx',
-    $package_source = 'nginx',
-    $package_ensure = 'present'
+    $manage_repo     = true,
+    $package_name    = 'nginx',
+    $package_source  = 'nginx',
+    $package_ensure  = 'present'
+    $package_version = undef,
   ) {
 
   $distro = downcase($::operatingsystem)
@@ -34,8 +35,15 @@ class nginx::package::debian(
 
     case $package_source {
       'nginx': {
+        if ($package_version != undef) {
+          $location = "http://nginx.org/packages/${package_version}/${distro}"
+        }
+        else {
+          $location = "http://nginx.org/packages/${distro}"
+        }
+
         apt::source { 'nginx':
-          location   => "http://nginx.org/packages/${distro}",
+          location   => $location,
           repos      => 'nginx',
           key        => '7BD9BF62',
           key_source => 'http://nginx.org/keys/nginx_signing.key',

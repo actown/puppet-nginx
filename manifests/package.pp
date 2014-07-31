@@ -14,10 +14,11 @@
 #
 # This class file is not called directly
 class nginx::package(
-  $package_name   = 'nginx',
-  $package_source = 'nginx',
-  $package_ensure = 'present',
-  $manage_repo    = true,
+  $package_name    = 'nginx',
+  $package_source  = 'nginx',
+  $package_ensure  = 'present',
+  $package_version = undef,
+  $manage_repo     = true,
 ) {
 
   anchor { 'nginx::package::begin': }
@@ -26,21 +27,23 @@ class nginx::package(
   case $::osfamily {
     'redhat': {
       class { 'nginx::package::redhat':
-        manage_repo    => $manage_repo,
-        package_ensure => $package_ensure,
-        package_name   => $package_name,
-        require        => Anchor['nginx::package::begin'],
-        before         => Anchor['nginx::package::end'],
+        manage_repo     => $manage_repo,
+        package_ensure  => $package_ensure,
+        package_name    => $package_name,
+        package_version => $package_version,
+        require         => Anchor['nginx::package::begin'],
+        before          => Anchor['nginx::package::end'],
       }
     }
     'debian': {
       class { 'nginx::package::debian':
-        package_name   => $package_name,
-        package_source => $package_source,
-        package_ensure => $package_ensure,
-        manage_repo    => $manage_repo,
-        require        => Anchor['nginx::package::begin'],
-        before         => Anchor['nginx::package::end'],
+        package_name    => $package_name,
+        package_source  => $package_source,
+        package_ensure  => $package_ensure,
+        package_version => $package_version,
+        manage_repo     => $manage_repo,
+        require         => Anchor['nginx::package::begin'],
+        before          => Anchor['nginx::package::end'],
       }
     }
     'suse': {

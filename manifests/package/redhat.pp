@@ -14,9 +14,10 @@
 #
 # This class file is not called directly
 class nginx::package::redhat (
-  $manage_repo    = true,
-  $package_ensure = 'present',
-  $package_name   = 'nginx',
+  $manage_repo     = true,
+  $package_ensure  = 'present',
+  $package_name    = 'nginx',
+  $package_version = undef,
 ) {
 
   case $::operatingsystem {
@@ -46,8 +47,15 @@ class nginx::package::redhat (
       # http://nginx.org/packages/rhel
       # no other dedicated dirs exist for platforms under $::osfamily == redhat
       if $manage_repo {
+        if ($package_version != undef) {
+          $location = "http://nginx.org/packages/${package_version}/rhel/${os_rel}/\$basearch/"
+        }
+        else {
+          $location = "http://nginx.org/packages/rhel/${os_rel}/\$basearch/"
+        }
+
         yumrepo { 'nginx-release':
-          baseurl  => "http://nginx.org/packages/rhel/${os_rel}/\$basearch/",
+          baseurl  => $location,
           descr    => 'nginx repo',
           enabled  => '1',
           gpgcheck => '1',
